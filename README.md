@@ -13,9 +13,11 @@ Extracts links from HTML and returns:
 Given this HTML:
 ```html
 
-  Something in a span
+  <a href="/dog">
+  <span>Something in a span</span>
   Text not in a span
-  Bold text!
+  <b>Bold text!</b>
+</a>
 
 ```
 
