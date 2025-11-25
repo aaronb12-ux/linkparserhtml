@@ -2,9 +2,11 @@ package main
 
 import (
 	//"io"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+	"strings"
+
 	"golang.org/x/net/html"
 )
 
@@ -27,33 +29,29 @@ func main() {
 
 	for n := range doc.Descendants() {
 
-		
-		fmt.Println("the element node is", html.ElementNode)
-		fmt.Println("the n.data is", n.Data)
-		fmt.Println("the attribute is", n.Attr)
-		fmt.Println("the type is", n.Type)
-		fmt.Println()
+		if n.Data == "a" && len(n.Attr) != 0 {
 
-
-		if n.Data == "a"{ //need to find a links then search within those a links...
-			
-			var link Link
-			if len(n.Attr[0].Val) != 0 {
+				var l Link 
+				fmt.Println("THE ATTRIBUTE OF THE PARENT IS", n.Attr)
+				l.Href = n.Attr[0].Val
 				
-				l := n.Attr[0].Val
-				link.Href = l
+				for child := range n.Descendants() {
+	
+					if child.Type == html.TextNode {
+						l.Text = append(l.Text, child.Data)
+					}
+									
+				}
 
-			}
-			//now search within this node?
-			fmt.Println(n.Type, html.ElementNode)
-			if n.Type == 3 && html.ElementNode == 3 {
-				link.Text = append(link.Text, n.Data)
-			}
+				strings.Join(l.Text, "")
+				Links = append(Links, l)
+				
+		}
 
-			Links = append(Links, link)
-		}	
+	
 	}
+    
 
-	fmt.Println(Links)
+	fmt.Println(Links[0].Text)
 
 }
