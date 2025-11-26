@@ -1,12 +1,10 @@
 package main
 
 import (
-	//"io"
 	"fmt"
 	"log"
 	"os"
 	"strings"
-
 	"golang.org/x/net/html"
 )
 
@@ -15,24 +13,21 @@ type Link struct {
 	Text []string
 }
 
-func main() {
+func getLinks(f *os.File) []Link {
 
-	f, err := os.Open("ex2.html")
-
-	if err != nil {
-		log.Fatalf("unable to open file")
-	}
-
+	defer f.Close() //make sure files closes when function ends
+	doc, err := html.Parse(f)
 	var Links []Link
 
-	doc, err := html.Parse(f)
+	if err != nil {
+		log.Fatal("error parsing file. exiting program")
+	}
 
 	for n := range doc.Descendants() {
 
 		if n.Data == "a" && len(n.Attr) != 0 {
 
 				var l Link 
-				fmt.Println("THE ATTRIBUTE OF THE PARENT IS", n.Attr)
 				l.Href = n.Attr[0].Val
 				
 				for child := range n.Descendants() {
@@ -44,14 +39,22 @@ func main() {
 				}
 
 				strings.Join(l.Text, "")
-				Links = append(Links, l)
-				
+				Links = append(Links, l)		
 		}
-
 	
 	}
-    
+		return Links
+}
 
-	fmt.Println(Links[0].Text)
+func main() {
+
+	f, err := os.Open("ex2.html")
+
+	if err != nil {
+		log.Fatal("unable to open file")
+	}
+
+	Links := getLinks(f)   
+	fmt.Println(Links)
 
 }
